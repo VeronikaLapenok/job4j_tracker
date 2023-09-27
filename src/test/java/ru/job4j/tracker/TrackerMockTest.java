@@ -10,14 +10,14 @@ import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.*;
 
 public class TrackerMockTest {
-    private Output output = new StubOutput();
-    private MemTracker tracker = new MemTracker();
-    private Input input = mock(Input.class);
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
             "dd-MMMM-EEEE-yyyy HH:mm:ss");
 
     @Test
     public void whenDeleteItemMockTest() {
+        Output output = new StubOutput();
+        MemTracker tracker = new MemTracker();
+        Input input = mock(Input.class);
         tracker.add(new Item("New item"));
         DeleteAction deleteAction = new DeleteAction(output);
 
@@ -32,6 +32,9 @@ public class TrackerMockTest {
 
     @Test
     public void whenFindItemByIdMockTest() {
+        Output output = new StubOutput();
+        MemTracker tracker = new MemTracker();
+        Input input = mock(Input.class);
         Item item = new Item("New item");
         tracker.add(item);
         var date = item.getCreated();
@@ -43,11 +46,14 @@ public class TrackerMockTest {
 
         String ln = System.lineSeparator();
         assertThat(output.toString()).isEqualTo("=== Find item by id ===" + ln
-                + "Item{id=1, name='New item', created=" + formatter.format(date) + "}" + ln);
+                + item + ln);
     }
 
     @Test
     public void whenFindItemByNameMockTest() {
+        Output output = new StubOutput();
+        MemTracker tracker = new MemTracker();
+        Input input = mock(Input.class);
         Item item = new Item("New item");
         tracker.add(item);
         var date = item.getCreated();
@@ -59,6 +65,6 @@ public class TrackerMockTest {
 
         String ln = System.lineSeparator();
         assertThat(output.toString()).isEqualTo("=== Find item by name ===" + ln
-                + "Item{id=1, name='New item', created=" + formatter.format(date) + "}" + ln);
+                + item + ln);
     }
 }
