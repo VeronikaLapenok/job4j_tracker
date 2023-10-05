@@ -5,8 +5,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HbmTracker implements Store, AutoCloseable {
@@ -71,47 +71,50 @@ public class HbmTracker implements Store, AutoCloseable {
     @Override
     public List<Item> findAll() {
         Session session = sf.openSession();
-        Query<Item> query = null;
+        List<Item> resultList = new ArrayList<>();
         try {
             session.beginTransaction();
-            query = session.createQuery("FROM Item", Item.class);
+            resultList = session.createQuery("FROM Item", Item.class)
+                            .list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
         }
-        return query.list();
+        return resultList;
     }
 
     @Override
     public List<Item> findByName(String key) {
         Session session = sf.openSession();
-        Query<Item> query = null;
+        List<Item> resultList = new ArrayList<>();
         try {
             session.beginTransaction();
-            query = session.createQuery(
-                    "FROM Item as i WHERE i.name = :fKey", Item.class);
-            query.setParameter("fKey", "%" + key + "%");
+            resultList = session.createQuery(
+                    "FROM Item as i WHERE i.name = :fKey", Item.class)
+                    .setParameter("fKey", "%" + key + "%")
+                    .list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
         }
-        return query.list();
+        return resultList;
     }
 
     @Override
     public Item findById(int id) {
         Session session = sf.openSession();
-        Query<Item> query = null;
+        Item item = new Item();
         try {
             session.beginTransaction();
-            query = session.createQuery(
-                    "FROM Item as i WHERE i.id = :fId", Item.class);
-            query.setParameter("fId", id);
+            item = session.createQuery(
+                    "FROM Item as i WHERE i.id = :fId", Item.class)
+                    .setParameter("fId", id)
+                    .uniqueResult();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
         }
-        return query.uniqueResult();
+        return item;
     }
 
     @Override
